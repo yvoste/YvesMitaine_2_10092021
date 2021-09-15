@@ -25,6 +25,7 @@ list_category_url = ret[1]
 list_category_url.pop(0)   # remove the first item books
 # print(list_category_url)  
 
+
 i = 0
 while i < len(list_categories):
     # print(list_categories[i])
