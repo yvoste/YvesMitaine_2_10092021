@@ -30,9 +30,9 @@ i = 0
 while i < len(list_categories):
     # print(list_categories[i])
     url_cat = 'http://books.toscrape.com/'+ list_category_url[i]  #url category
-    retour = get_paging_url(url_cat)
-    nb_item_by_cat = retour[0] # nb items by category
-    get_items = retour[1]  # list of item in first page of category
+    paging_and_list_items = get_paging_url(url_cat)
+    nb_item_by_cat = paging_and_list_items[0] # nb items by category
+    get_items = paging_and_list_items[1]  # list of item in first page of category
     is_file = create_csv(catalog, en_tete, list_categories[i], get_items, global_url)
     if is_file is False:
         break
@@ -42,6 +42,6 @@ while i < len(list_categories):
         is_file = add_data_in_csv(catalog, url_cat, list_categories[i], get_items, global_url, indice)
         
         if is_file is False:
-            break  
-    i += 1
+            break
 
+    i += 1

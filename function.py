@@ -2,6 +2,7 @@ from math import ceil
 import requests
 from bs4 import BeautifulSoup
 import csv342 as csv
+from pathlib import Path
 
 # extract data and filled list categories and list url categories
 def fill_list_categories(global_url):
@@ -74,8 +75,8 @@ def create_csv(catalog, en_tete, category, get_items, global_url):
                 url_item = catalog + get_item  # url item 
                 poge = requests.get(url_item)
                 soup_item = BeautifulSoup(poge.content, 'html.parser')
-                data_item = extract_final_data(soup_item, global_url, url_item)   # data of item
-                print(data_item[1])        
+                data_item = extract_final_data(soup_item, global_url, url_item, category)   # data of item
+                # print(data_item[1])        
                 writer.writerow(data_item)
         return True
     except:
@@ -83,24 +84,24 @@ def create_csv(catalog, en_tete, category, get_items, global_url):
 
 
 # add data in csv
-def add_data_in_csv(catalog, url_cat, list_categories, get_items, global_url, indice):
+def add_data_in_csv(catalog, url_cat, category, get_items, global_url, indice):
     try:
         w = 2
         while w <= indice:            
             url_modifying = url_cat.replace("index", "page-" + str(w))
-            print(url_modifying)
+            # print(url_modifying)
             page_cat = requests.get(url_modifying)
             soup_pag = BeautifulSoup(page_cat.content, 'html.parser')
 
             get_items = extract_items(soup_pag)
 
-            with open("./data/"+ list_categories +".csv", 'a') as file_csv:
+            with open("./data/"+ category +".csv", 'a') as file_csv:
                 writer = csv.writer(file_csv, delimiter='|')
                 for get_item in get_items:
                     url_item = catalog + get_item
                     page = requests.get(url_item)
                     soup_item = BeautifulSoup(page.content, 'html.parser')
-                    data_item = extract_final_data(soup_item, global_url, url_item)                
+                    data_item = extract_final_data(soup_item, global_url, url_item, category)                
                     writer.writerow(data_item)
                 
             w += 1
@@ -111,7 +112,7 @@ def add_data_in_csv(catalog, url_cat, list_categories, get_items, global_url, in
 
 
 # extract final data for each item
-def extract_final_data(soup, global_url, url_item):
+def extract_final_data(soup, global_url, url_item, category):
     list_result = []
     try:
         tr_data = soup.find_all("tr")
@@ -149,7 +150,25 @@ def extract_final_data(soup, global_url, url_item):
         list_result.append(res["category"])
         list_result.append(res["Number of reviews"])
         list_result.append(res["image_url"])
+        download_img(res["title"], res["image_url"], category)
         # print(list_result)
         return list_result
     except:
         return 'error'
+
+# download image
+def download_img(title, image_url, category):
+    path = Path("img/" + category)
+    path.mkdir(parents=True, exist_ok=True)
+    print(image_url)
+    print(path)
+    f = open("img/" + category +'/' + title + '.jpg', 'wb')
+    response = requests.get(image_url)
+    print(response)
+    if response.content:
+        print('OK')
+        f.write(response.content)    
+        f.close()
+    else:
+        print('KO')
+        f.close()
