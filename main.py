@@ -23,8 +23,7 @@ list_categories = ret[0]
 list_categories.remove('Books') # remove the first item books
 list_category_url = ret[1]
 list_category_url.pop(0)   # remove the first item books
-# print(list_category_url)           
-
+# print(list_category_url)  
 
 i = 0
 while i < len(list_categories):
