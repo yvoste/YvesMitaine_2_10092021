@@ -45,3 +45,4 @@ while i < len(list_categories):
             break
 
     i += 1
+
